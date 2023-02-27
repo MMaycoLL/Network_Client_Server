@@ -1,4 +1,4 @@
-package entrega1;
+package entrega_1;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -115,7 +115,5 @@ public class Servidor {
                 break;
         }
     }
-//
-
 }
 
