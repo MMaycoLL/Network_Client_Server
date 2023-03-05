@@ -11,6 +11,7 @@ public class ClientHandlerIterationOne {
         System.out.print("Cedula: ");
         String cedula = SCANNER.nextLine();
 
+
         System.out.print("\nClave: ");
         String clave = SCANNER.nextLine();
 
