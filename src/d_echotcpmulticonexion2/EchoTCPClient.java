@@ -21,7 +21,7 @@ public class EchoTCPClient {
     }
 
     public void init() throws Exception {
-        File file = new File("mensaje.txt");
+        File file = new File("datos.txt");
         BufferedReader reader = new BufferedReader(new FileReader(file));
         String message = reader.readLine();
 

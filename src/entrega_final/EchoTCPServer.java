@@ -15,10 +15,12 @@ public class EchoTCPServer {
 
     private Map<String, Cuenta> cuentas;
 
-    private String fileName = "mensaje.txt";
+    private String fileName = "datos.txt";
+
     public EchoTCPServer() {
         System.out.println("Echo TCP server is running on port: " + PORT);
     }
+
     public void init() throws Exception {
         listener = new ServerSocket(PORT);
         cuentas = new HashMap<>();
@@ -38,32 +40,32 @@ public class EchoTCPServer {
         String opc = data.split("/")[0];
         System.out.println("Opc: " + opc);
         System.out.println(data);
-        String resp = "";
-        switch (opc){
+        String respuestaServidor = "";
+        switch (opc) {
             case "CUENTA":
-                resp = protocoloCuenta(data);
+                respuestaServidor = protocoloCuenta(data);
                 break;
 
             case "MOVI":
-                resp = protocoloMovimiento(data);
+                respuestaServidor = protocoloMovimiento(data);
                 break;
 
             case "SALIR":
                 protocoloSalir(socket);
                 return;
         }
-        System.out.println("Server response: " + resp);
+        System.out.println("Server response: " + respuestaServidor);
         System.out.println(cuentas);
-        toNetwork.println(resp);
+        toNetwork.println(respuestaServidor);
         writeCuentasToFile();
     }
 
 
-    public String protocoloMovimiento(String data){
+    public String protocoloMovimiento(String data) {
         String opc = data.split("/")[1];
         System.out.println("Opc: " + opc);
         String resp = "";
-        switch (opc){
+        switch (opc) {
             case "RETIRO":
                 resp = protocoloRetiro(data);
                 break;
@@ -80,82 +82,105 @@ public class EchoTCPServer {
     }
 
     private String protocoloTransferencia(String data) {
+        // Obtener los datos necesarios de la petición
         String idCuentaOrigen = data.split("/")[2];
         String clave = data.split("/")[3];
         String idCuentaDestino = data.split("/")[4];
         String monto = data.split("/")[5];
-        Cuenta cuentaOrigen = null;
-        Cuenta cuentaDestino = null;
-        if(!(cuentas.containsKey(idCuentaOrigen) && cuentas.containsKey(idCuentaDestino) &&
-                cuentas.get(idCuentaOrigen).getClave().equals(clave))){
+
+        // Verificar que ambas cuentas existen y la clave de la cuenta de origen es correcta
+        if (!(cuentas.containsKey(idCuentaOrigen) && cuentas.containsKey(idCuentaDestino) && cuentas.get(idCuentaOrigen).getClave().equals(clave))) {
             return "No se ha realizado la transferencia/la información ingresada es incorrecta.";
         }
-        cuentaOrigen = cuentas.get(idCuentaOrigen);
-        cuentaDestino = cuentas.get(idCuentaDestino);
+
+        // Obtener las cuentas de origen y destino
+        Cuenta cuentaOrigen = cuentas.get(idCuentaOrigen);
+        Cuenta cuentaDestino = cuentas.get(idCuentaDestino);
+
+        // Realizar la transferencia
         cuentaDestino.setMonto(cuentaDestino.getMonto() + Double.parseDouble(monto));
         cuentaOrigen.setMonto(cuentaOrigen.getMonto() - Double.parseDouble(monto));
+
+        // Retornar un mensaje de éxito con el monto actual de la cuenta de origen
         return "Transferencia exitosa/Monto actual: " + cuentaOrigen.getMonto();
     }
 
+
     private String protocoloConsignacion(String data) {
-        String idCuenta = data.split("/")[2];
-        String cedula = data.split("/")[3];
-        String monto = data.split("/")[4];
-        Cuenta cuenta = null;
-        if(!(cuentas.containsKey(idCuenta) && cuentas.get(idCuenta).getCedula().equals(cedula))){
+        // Se extraen los datos de la cadena recibida
+        String[] parts = data.split("/");
+        String idCuenta = parts[2];
+        String cedula = parts[3];
+        String monto = parts[4];
+
+        // Se verifica si la cuenta existe y si la cédula ingresada es correcta
+        if (!cuentas.containsKey(idCuenta) || !cuentas.get(idCuenta).getCedula().equals(cedula)) {
             return "No se ha consignado el monto/la información ingresada es incorrecta.";
         }
-        cuenta = cuentas.get(idCuenta);
+
+        // Se actualiza el monto de la cuenta
+        Cuenta cuenta = cuentas.get(idCuenta);
         cuenta.setMonto(cuenta.getMonto() + Double.parseDouble(monto));
+
+        // Se retorna la respuesta exitosa junto con el monto actualizado
         return "Consignación exitosa/Monto actual: " + cuenta.getMonto();
     }
 
+
     private String protocoloRetiro(String data) {
+        // Obtener los datos de la transacción
         String idCuenta = data.split("/")[2];
         String cedula = data.split("/")[3];
         String monto = data.split("/")[4];
         String clave = data.split("/")[5];
-        Cuenta cuenta = null;
-        if(!(cuentas.containsKey(idCuenta) && cuentas.get(idCuenta).getCedula().equals(cedula) &&
-                cuentas.get(idCuenta).getClave().equals(clave))){
+
+        // Verificar que la cuenta existe y que la información ingresada es correcta
+        if (!(cuentas.containsKey(idCuenta) && cuentas.get(idCuenta).getCedula().equals(cedula) && cuentas.get(idCuenta).getClave().equals(clave))) {
             return "No se ha retirado el monto/la información ingresada es incorrecta.";
         }
-        cuenta = cuentas.get(idCuenta);
+
+        // Realizar el retiro
+        Cuenta cuenta = cuentas.get(idCuenta);
         cuenta.setMonto(cuenta.getMonto() - Double.parseDouble(monto));
+
+        // Retornar el mensaje de respuesta de la transacción
         return "Monto retirado con exito/Monto actual: " + cuenta.getMonto();
     }
 
-    public String protocoloCuenta(String data) throws Exception {
+    public String protocoloCuenta(String data) {
         String opc = data.split("/")[1];
         System.out.println("Opc: " + opc);
-        String resp = "";
-        switch (opc){
-            case "CONSUL":
-                resp = protocoloConsultarId(data);
-                break;
 
-            case "ABRIR":
-                resp = protocoloAbrir(data);
-                break;
+        try {
+            switch (opc) {
+                case "CONSULTAR":
+                    return protocoloConsultarId(data);
 
-            case "MOD":
-                resp = protocoloMod(data);
-                break;
+                case "ABRIR":
+                    return protocoloAbrir(data);
 
-            case "CERRAR":
-                resp = protocoloCerrar(data);
-                break;
+                case "MODIFICAR":
+                    return protocoloMod(data);
+
+                case "CERRAR":
+                    return protocoloCerrar(data);
+
+                default:
+                    return "Opción no válida";
+            }
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
         }
-        return resp;
     }
 
-    public String protocoloConsultarId(String data){
+
+    public String protocoloConsultarId(String data) {
         System.out.println("Consultando ID...");
         String cedula = data.split("/")[2];
         String clave = data.split("/")[3];
         String resp = "La cuenta no fue hallada...";
-        for(Cuenta cuenta: cuentas.values()){
-            if(cuenta.getCedula().equals(cedula) && cuenta.getClave().equals(clave)) {
+        for (Cuenta cuenta : cuentas.values()) {
+            if (cuenta.getCedula().equals(cedula) && cuenta.getClave().equals(clave)) {
                 resp = "ID cuenta: " + cuenta.getNroCuenta();
             }
         }
@@ -164,9 +189,12 @@ public class EchoTCPServer {
 
     public String protocoloAbrir(String data) {
         try {
+            // Verificar si la cuenta ya existe
             if (consultarCuenta(data)) {
-                return "1";
+                return "1"; // Se retorna "1" si la cuenta ya existe
             }
+
+            // Crear la nueva cuenta y asignar los valores de los parámetros
             System.out.println("Abriendo cuenta...");
             Cuenta cuenta = new Cuenta();
             cuenta.setNombre(data.split("/")[2]);
@@ -174,30 +202,41 @@ public class EchoTCPServer {
             cuenta.setCedula(data.split("/")[4]);
             cuenta.setMonto(Double.parseDouble(data.split("/")[5]));
             cuenta.setClave(data.split("/")[6]);
+
+            // Agregar la cuenta al mapa de cuentas
             cuentas.put(String.valueOf(cuenta.getNroCuenta()), cuenta);
-            return "Cuenta abierta..." +
-                    "/ID: " + cuenta.getNroCuenta() +
-                    "/Nombre: " + cuenta.getNombre() +
-                    "/Apellido: " + cuenta.getApellido() +
-                    "/Monto depositado: " + cuenta.getMonto() +
-                    "/Clave: " + cuenta.getClave();
-        }catch (NumberFormatException ex){
+
+            // Retornar un mensaje con la información de la cuenta creada
+            return "Cuenta abierta..." + "/ID: " + cuenta.getNroCuenta() + "/Nombre: " + cuenta.getNombre() + "/Apellido: " + cuenta.getApellido() + "/Monto depositado: " + cuenta.getMonto() + "/Clave: " + cuenta.getClave();
+        } catch (NumberFormatException ex) {
+            // Capturar la excepción si el monto no es un número válido
             return "El monto solo debe contener valores numéricos...";
         }
     }
 
-    public String protocoloMod(String data){
-        String idCuenta = data.split("/")[2];
-        String clave = data.split("/")[3];
-        String campoMod = data.split("/")[4].toUpperCase();
-        String nuevaInfo = data.split("/")[5];
-        Cuenta cuenta = null;
-        if(!(cuentas.containsKey(idCuenta) && cuentas.get(idCuenta).getClave().equals(clave))){
+
+    // Definimos una función para modificar una cuenta según los datos recibidos en la variable `data`.
+    public String protocoloMod(String data) {
+
+        // Dividimos la cadena `data` en sus componentes y los almacenamos en un arreglo.
+        String[] parts = data.split("/");
+
+        // Obtenemos el ID de la cuenta a modificar, la clave y la información a modificar.
+        String idCuenta = parts[2];
+        String clave = parts[3];
+        String campoMod = parts[4].toUpperCase();
+        String nuevaInfo = parts[5];
+
+        // Verificamos si la cuenta existe y si la clave es correcta.
+        if (!cuentas.containsKey(idCuenta) || !cuentas.get(idCuenta).getClave().equals(clave)) {
             return "No se ha modificado la cuenta, la información ingresada es incorrecta.";
         }
+
+        // Si la cuenta existe y la clave es correcta, modificamos la cuenta.
         System.out.println("Modificando cuenta: " + idCuenta);
-        cuenta = cuentas.get(idCuenta);
-        switch (campoMod){
+        Cuenta cuenta = cuentas.get(idCuenta);
+
+        switch (campoMod) {
             case "NOMBRE":
                 cuenta.setNombre(nuevaInfo);
                 break;
@@ -210,13 +249,15 @@ public class EchoTCPServer {
             default:
                 return "El campo a modificar no existe.";
         }
+
         return "Cuenta modificada...";
     }
 
-    public String protocoloCerrar(String data){
+
+    public String protocoloCerrar(String data) {
         String idCuenta = data.split("/")[2];
         String clave = data.split("/")[3];
-        if(cuentas.containsKey(idCuenta) && cuentas.get(idCuenta).getClave().equals(clave)){
+        if (cuentas.containsKey(idCuenta) && cuentas.get(idCuenta).getClave().equals(clave)) {
             cuentas.remove(idCuenta);
             return "Cuenta cerrada...";
         }
@@ -229,10 +270,10 @@ public class EchoTCPServer {
         socket.close();
     }
 
-    public boolean consultarCuenta(String data){
+    public boolean consultarCuenta(String data) {
         String cedula = data.split("/")[4];
-        for (Cuenta cuenta : cuentas.values()){
-            if (cuenta.getCedula().equals(cedula)){
+        for (Cuenta cuenta : cuentas.values()) {
+            if (cuenta.getCedula().equals(cedula)) {
                 return true;
             }
         }
@@ -243,6 +284,7 @@ public class EchoTCPServer {
         toNetwork = new PrintWriter(socket.getOutputStream(), true);
         fromNetwork = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
+
     private void writeCuentasToFile() {
         try {
             FileWriter fw = new FileWriter(fileName);
@@ -275,7 +317,7 @@ public class EchoTCPServer {
                 String clave = parts[5];
 
                 Cuenta cuenta = new Cuenta();
-               // cuenta.setNroCuenta(id);
+                // cuenta.setNroCuenta(id);
                 cuenta.setNombre(nombre);
                 cuenta.setApellido(apellido);
                 cuenta.setCedula(cedula);
@@ -289,6 +331,7 @@ public class EchoTCPServer {
             System.out.println("Error al leer las cuentas del archivo: " + ex.getMessage());
         }
     }
+
     public static void main(String args[]) throws Exception {
         EchoTCPServer es = new EchoTCPServer();
         es.init();
