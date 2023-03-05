@@ -47,7 +47,7 @@ public class Servidor {
     }
 
     public void protocol(Socket socket) throws Exception {
-        int clientPort = socket.getPort();
+        //int clientPort = socket.getPort();
         System.out.println("[Server] Connected to client " + socket.getRemoteSocketAddress());
 
         String message = fromNetwork.readLine();
@@ -113,6 +113,9 @@ public class Servidor {
                     toNetwork.println("[Server] La cuenta número " + numCuentaElim + " no existe.");
                 }
                 break;
+                //
+            // case "CONSULTA":
+                //
         }
     }
 }

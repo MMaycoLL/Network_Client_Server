@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class UsersTCPClient {
     private static final Scanner scanner = new Scanner(System.in);
     private static final String SERVER = "localhost";
-    private static final int PORT = 1234;
+    private static final int PORT = 3400;
 
     private PrintWriter toServer;
     private BufferedReader fromServer;

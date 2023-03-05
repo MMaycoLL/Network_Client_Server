@@ -20,10 +20,10 @@ public class Cliente {
         clientSideSocket = new Socket(SERVER_IP, SERVER_PORT);
 
         createStreams(clientSideSocket);
-        protocol();
+        protocol(clientSideSocket);
     }
 
-    public void protocol() throws Exception {
+    public void protocol(Socket clientSideSocket) throws Exception {
         BufferedReader fromUser = new BufferedReader(new InputStreamReader(System.in));
 
         while (true) {
