@@ -8,17 +8,21 @@ import java.util.Map;
 
 public class EchoTCPServer {
     public static final int PORT = 4200;
+    private final String fileName = "datos.txt";
     private ServerSocket listener;
     private Socket serverSideSocket;
-    private PrintWriter toNetwork;
+
+    public static PrintWriter toNetwork;
     private BufferedReader fromNetwork;
-
     private Map<String, Cuenta> cuentas;
-
-    private String fileName = "datos.txt";
 
     public EchoTCPServer() {
         System.out.println("Echo TCP server is running on port: " + PORT);
+    }
+
+    public static void main(String[] args) throws Exception {
+        EchoTCPServer es = new EchoTCPServer();
+        es.init();
     }
 
     public void init() throws Exception {
@@ -43,15 +47,15 @@ public class EchoTCPServer {
         String respuestaServidor = "";
         switch (opc) {
             case "CUENTA":
-                respuestaServidor = protocoloCuenta(data);
+                respuestaServidor = primeraIteracion(data);
                 break;
 
-            case "MOVI":
-                respuestaServidor = protocoloMovimiento(data);
+            case "MOVIMIENTOS":
+                respuestaServidor = segundaIteracion(data);
                 break;
 
             case "SALIR":
-                protocoloSalir(socket);
+                HandlerIteracion1.protocoloSalir(socket);
                 return;
         }
         System.out.println("Server response: " + respuestaServidor);
@@ -60,88 +64,23 @@ public class EchoTCPServer {
         writeCuentasToFile();
     }
 
-
-    public String protocoloMovimiento(String data) {
-        String opc = data.split("/")[1];
-        System.out.println("Opc: " + opc);
-        String resp = "";
-        switch (opc) {
-            case "RETIRO":
-                resp = protocoloRetiro(data);
-                break;
-
-            case "CONSIG":
-                resp = protocoloConsignacion(data);
-                break;
-
-            case "TRANSFER":
-                resp = ProtocolHandler.protocoloTransferencia(cuentas, data);
-                break;
-        }
-        return resp;
-    }
-
-
-
-
-    private String protocoloConsignacion(String data) {
-        // Se extraen los datos de la cadena recibida
-        String[] parts = data.split("/");
-        String idCuenta = parts[2];
-        String cedula = parts[3];
-        String monto = parts[4];
-
-        // Se verifica si la cuenta existe y si la cédula ingresada es correcta
-        if (!cuentas.containsKey(idCuenta) || !cuentas.get(idCuenta).getCedula().equals(cedula)) {
-            return "No se ha consignado el monto/la información ingresada es incorrecta.";
-        }
-
-        // Se actualiza el monto de la cuenta
-        Cuenta cuenta = cuentas.get(idCuenta);
-        cuenta.setMonto(cuenta.getMonto() + Double.parseDouble(monto));
-
-        // Se retorna la respuesta exitosa junto con el monto actualizado
-        return "Consignación exitosa/Monto actual: " + cuenta.getMonto();
-    }
-
-
-    private String protocoloRetiro(String data) {
-        // Obtener los datos de la transacción
-        String idCuenta = data.split("/")[2];
-        String cedula = data.split("/")[3];
-        String monto = data.split("/")[4];
-        String clave = data.split("/")[5];
-
-        // Verificar que la cuenta existe y que la información ingresada es correcta
-        if (!(cuentas.containsKey(idCuenta) && cuentas.get(idCuenta).getCedula().equals(cedula) && cuentas.get(idCuenta).getClave().equals(clave))) {
-            return "No se ha retirado el monto/la información ingresada es incorrecta.";
-        }
-
-        // Realizar el retiro
-        Cuenta cuenta = cuentas.get(idCuenta);
-        cuenta.setMonto(cuenta.getMonto() - Double.parseDouble(monto));
-
-        // Retornar el mensaje de respuesta de la transacción
-        return "Monto retirado con exito/Monto actual: " + cuenta.getMonto();
-    }
-
-    public String protocoloCuenta(String data) {
+    public String primeraIteracion(String data) {
         String opc = data.split("/")[1];
         System.out.println("Opc: " + opc);
 
         try {
             switch (opc) {
-                case "CONSULTAR":
-                    return protocoloConsultarId(data);
+                case "CONSULTAR_ID":
+                    return HandlerIteracion1.consultarIdCuenta(cuentas, data);
 
                 case "ABRIR":
-                    return protocoloAbrir(data);
+                    return aperturaCuenta(data);
 
                 case "MODIFICAR":
-                    return protocoloMod(data);
+                    return HandlerIteracion1.modificacionInfoCuenta(cuentas, data);
 
                 case "CERRAR":
-                    return protocoloCerrar(data);
+                    return HandlerIteracion1.cierreCuenta(cuentas, data);
 
                 default:
                     return "Opción no válida";
@@ -152,20 +91,29 @@ public class EchoTCPServer {
     }
 
 
-    public String protocoloConsultarId(String data) {
-        System.out.println("Consultando ID...");
-        String cedula = data.split("/")[2];
-        String clave = data.split("/")[3];
-        String resp = "La cuenta no fue hallada...";
-        for (Cuenta cuenta : cuentas.values()) {
-            if (cuenta.getCedula().equals(cedula) && cuenta.getClave().equals(clave)) {
-                resp = "ID cuenta: " + cuenta.getNroCuenta();
-            }
+    public String segundaIteracion(String data) {
+        String opcion = data.split("/")[1];
+        System.out.println("Opcion: " + opcion);
+        String resp = "";
+        switch (opcion) {
+
+            case "CONSIGNACION":
+                resp = HandlerIteracion2.consignacionDinero(cuentas, data);
+                break;
+
+            case "TRANSFERERENCIA":
+                resp = HandlerIteracion2.tranferenciaBamcaria(cuentas, data);
+                break;
+
+            case "RETIRO":
+                resp = HandlerIteracion2.retiroDineroCuenta(cuentas, data);
+                break;
         }
         return resp;
     }
 
-    public String protocoloAbrir(String data) {
+
+    public String aperturaCuenta(String data) {
         try {
             // Verificar si la cuenta ya existe
             if (consultarCuenta(data)) {
@@ -193,60 +141,8 @@ public class EchoTCPServer {
     }
 
 
-    // Definimos una función para modificar una cuenta según los datos recibidos en la variable `data`.
-    public String protocoloMod(String data) {
-
-        // Dividimos la cadena `data` en sus componentes y los almacenamos en un arreglo.
-        String[] parts = data.split("/");
-
-        // Obtenemos el ID de la cuenta a modificar, la clave y la información a modificar.
-        String idCuenta = parts[2];
-        String clave = parts[3];
-        String campoMod = parts[4].toUpperCase();
-        String nuevaInfo = parts[5];
-
-        // Verificamos si la cuenta existe y si la clave es correcta.
-        if (!cuentas.containsKey(idCuenta) || !cuentas.get(idCuenta).getClave().equals(clave)) {
-            return "No se ha modificado la cuenta, la información ingresada es incorrecta.";
-        }
-
-        // Si la cuenta existe y la clave es correcta, modificamos la cuenta.
-        System.out.println("Modificando cuenta: " + idCuenta);
-        Cuenta cuenta = cuentas.get(idCuenta);
-
-        switch (campoMod) {
-            case "NOMBRE":
-                cuenta.setNombre(nuevaInfo);
-                break;
-            case "APELLIDO":
-                cuenta.setApellido(nuevaInfo);
-                break;
-            case "CLAVE":
-                cuenta.setClave(nuevaInfo);
-                break;
-            default:
-                return "El campo a modificar no existe.";
-        }
-
-        return "Cuenta modificada...";
-    }
 
 
-    public String protocoloCerrar(String data) {
-        String idCuenta = data.split("/")[2];
-        String clave = data.split("/")[3];
-        if (cuentas.containsKey(idCuenta) && cuentas.get(idCuenta).getClave().equals(clave)) {
-            cuentas.remove(idCuenta);
-            return "Cuenta cerrada...";
-        }
-        return "No se ha cerrado la cuenta, la información ingresada es incorrecta.";
-    }
-
-    public void protocoloSalir(Socket socket) throws IOException {
-        System.out.println("Cerrando conexión con el cliente: " + socket.getInetAddress().getHostAddress());
-        toNetwork.println("Adios desde el servidor :D");
-        socket.close();
-    }
 
     public boolean consultarCuenta(String data) {
         String cedula = data.split("/")[4];
@@ -295,7 +191,6 @@ public class EchoTCPServer {
                 String clave = parts[5];
 
                 Cuenta cuenta = new Cuenta();
-                // cuenta.setNroCuenta(id);
                 cuenta.setNombre(nombre);
                 cuenta.setApellido(apellido);
                 cuenta.setCedula(cedula);
@@ -308,10 +203,5 @@ public class EchoTCPServer {
         } catch (IOException ex) {
             System.out.println("Error al leer las cuentas del archivo: " + ex.getMessage());
         }
-    }
-
-    public static void main(String args[]) throws Exception {
-        EchoTCPServer es = new EchoTCPServer();
-        es.init();
     }
 }

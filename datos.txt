@@ -3,3 +3,4 @@
 3/maycol/agredo/1116445211/70000.0/4321
 4/tomas/binilla/4354/40000.0/4312
 5/juanita/amariles/123456/20000.0/1234
+6/patricio/carlisson/111454564/30000.0/1234

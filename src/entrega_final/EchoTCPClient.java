@@ -30,13 +30,13 @@ public class EchoTCPClient {
         System.out.println("\t\tBienvenido al sistema bancario.");
 
         while (true) {
-            System.out.println("\n\t\033╔══════════════════════════════════╗\n" +
-                    "\t║                                  ║\n" +
-                    "\t║      1. Manejar cuenta           ║\n" +
-                    "\t║      2. Movimientos              ║\n" +
-                    "\t║      3. Salir del programa       ║\n" +
-                    "\t║                                  ║\n" +
-                    "\t╚══════════════════════════════════╝\n");
+            System.out.println("\n\t\033 ╔══════════════════════════════════╗\n" +
+                    " \t║                                  ║\n" +
+                    " \t║      1. Manejar cuenta           ║\n" +
+                    " \t║      2. Movimientos              ║\n" +
+                    " \t║      3. Salir del programa       ║\n" +
+                    " \t║                                  ║\n" +
+                    " \t╚══════════════════════════════════╝\n");
 
             System.out.print("\t- \033[0;33m");
             String input = SCANNER.nextLine();
@@ -57,11 +57,11 @@ public class EchoTCPClient {
     public void protocoloCuenta() throws Exception {
         while (true) {
             System.out.print("\n\tOPCIONES\n" +
-                    "1\t====>\tConsultar ID cuenta\n" +
-                    "2\t====>\tAbrir cuenta\n" +
-                    "3\t====>\tModificar cuenta\n" +
-                    "4\t====>\tCerrar cuenta\n" +
-                    "5\t====>\tRegresar\n" +
+                    "1\t Consultar ID cuenta\n" +
+                    "2\t Abrir cuenta\n" +
+                    "3\t Modificar cuenta\n" +
+                    "4\t Cerrar cuenta\n" +
+                    "5\t Regresar\n" +
                     "- ");
 
             int opc = Integer.parseInt(SCANNER.nextLine());
@@ -85,10 +85,10 @@ public class EchoTCPClient {
     public void protocoloMovimiento() throws Exception {
         Scanner scanner = new Scanner(System.in);
         System.out.println("\n\tOPCIONES");
-        System.out.println("1\t====>\tConsignación");
-        System.out.println("2\t====>\tTransferencia");
-        System.out.println("3\t====>\tRetiro");
-        System.out.println("4\t====>\tRegresar");
+        System.out.println("1\t Consignación");
+        System.out.println("2\t Transferencia");
+        System.out.println("3\t Retiro");
+        System.out.println("4\t Regresar");
 
         while (true) {
             System.out.print("- ");
@@ -96,7 +96,7 @@ public class EchoTCPClient {
             int opc = scanner.nextInt();
 
             switch (opc) {
-                case 1 -> protocoloConsignacion();
+                case 1 -> consignacionDinero();
                 case 2 -> protocoloTransferencia();
                 case 3 -> protocoloRetiro();
                 case 4 -> {
@@ -108,7 +108,7 @@ public class EchoTCPClient {
         }
     }
 
-    private void protocoloConsignacion() throws IOException {
+    private void consignacionDinero() throws IOException {
         System.out.print("Ingrese la siguiente información" +
                 "\nID cuenta: ");
         String idCuenta = SCANNER.nextLine();
