@@ -27,41 +27,29 @@ public class EchoTCPClient {
     }
 
     public void menu(Socket socket) throws Exception {
-        /// Mensaje de bienvenida
         System.out.println("\t\tBienvenido al sistema bancario.");
 
         while (true) {
-            // Imprimir opciones
-            System.out.println("\n\t\033╔══════════════════════════════════╗");
-            System.out.println("\t║                                  ║");
-            System.out.println("\t║      1. Manejar cuenta           ║");
-            System.out.println("\t║      2. Movimientos              ║");
-            System.out.println("\t║      3. Salir del programa       ║");
-            System.out.println("\t║                                  ║");
-            System.out.println("\t╚══════════════════════════════════╝\n");
+            System.out.println("\n\t\033╔══════════════════════════════════╗\n" +
+                    "\t║                                  ║\n" +
+                    "\t║      1. Manejar cuenta           ║\n" +
+                    "\t║      2. Movimientos              ║\n" +
+                    "\t║      3. Salir del programa       ║\n" +
+                    "\t║                                  ║\n" +
+                    "\t╚══════════════════════════════════╝\n");
 
-            // Configurar color de fuente
             System.out.print("\t- \033[0;33m");
-
-            // Esperar entrada del usuario
             String input = SCANNER.nextLine();
-
-            // Configurar color de fuente
             System.out.print("\033[0m");
 
-            // Verificar opción seleccionada
             switch (input) {
-                case "1":
-                    protocoloCuenta();
-                    break;
-                case "2":
-                    protocoloMovimiento();
-                    break;
-                case "3":
+                case "1" -> protocoloCuenta();
+                case "2" -> protocoloMovimiento();
+                case "3" -> {
                     protocoloSalir(socket);
                     return;
-                default:
-                    System.out.println("Opción inválida. Intente de nuevo.");
+                }
+                default -> System.out.println("Opción inválida. Intente de nuevo.");
             }
         }
     }
@@ -95,47 +83,29 @@ public class EchoTCPClient {
 
 
     public void protocoloMovimiento() throws Exception {
-        int opc = 0;
-        do {
-            System.out.println("\n\tOPCIONES");
-            System.out.println("1\t====>\tConsignación");
-            System.out.println("2\t====>\tTransferencia");
-            System.out.println("3\t====>\tRetiro");
-            System.out.println("4\t====>\tRegresar");
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("\n\tOPCIONES");
+        System.out.println("1\t====>\tConsignación");
+        System.out.println("2\t====>\tTransferencia");
+        System.out.println("3\t====>\tRetiro");
+        System.out.println("4\t====>\tRegresar");
+
+        while (true) {
             System.out.print("- ");
 
-            try {
-                opc = Integer.parseInt(SCANNER.nextLine());
-                System.out.flush();
-            } catch (NumberFormatException e) {
-                System.out.println("Entrada inválida. Intente de nuevo.");
-                continue;
-            }
+            int opc = scanner.nextInt();
 
             switch (opc) {
-                case 1:
-                    // Ejecutar el protocolo de consignación
-                    protocoloConsignacion();
-                    break;
-
-                case 2:
-                    // Ejecutar el protocolo de transferencia
-                    protocoloTransferencia();
-                    break;
-
-                case 3:
-                    // Ejecutar el protocolo de retiro
-                    protocoloRetiro();
-                    break;
-
-                case 4:
-                    // Salir del protocolo de movimiento
+                case 1 -> protocoloConsignacion();
+                case 2 -> protocoloTransferencia();
+                case 3 -> protocoloRetiro();
+                case 4 -> {
+                    System.out.println("Saliendo del protocolo de movimiento...");
                     return;
-
-                default:
-                    System.out.println("Opción incorrecta...");
+                }
+                default -> System.out.println("Opción incorrecta. Por favor, seleccione una opción válida.");
             }
-        } while (opc != 4);
+        }
     }
 
     private void protocoloConsignacion() throws IOException {
