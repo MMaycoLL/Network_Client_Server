@@ -1,4 +1,4 @@
-package entrega1;
+package entrega_1;
 
 public class CuentaAhorros {
     private int cedula;
@@ -54,7 +54,6 @@ public class CuentaAhorros {
     public void setClave(String clave) {
         this.clave = clave;
     }
-//
     @Override
     public String toString() {
         return "CuentaAhorros{" +

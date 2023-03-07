@@ -1,10 +1,9 @@
-package entrega1;
+package entrega_1;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-//
 public class Cliente {
     public static final String SERVER_IP = "localhost"; // localhost
     public static final int SERVER_PORT = 3400;
@@ -21,10 +20,10 @@ public class Cliente {
         clientSideSocket = new Socket(SERVER_IP, SERVER_PORT);
 
         createStreams(clientSideSocket);
-        protocol();
+        protocol(clientSideSocket);
     }
 
-    public void protocol() throws Exception {
+    public void protocol(Socket clientSideSocket) throws Exception {
         BufferedReader fromUser = new BufferedReader(new InputStreamReader(System.in));
 
         while (true) {
