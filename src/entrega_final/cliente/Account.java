@@ -1,6 +1,6 @@
-package entrega_final;
+package entrega_final.cliente;
 
-public class Cuenta {
+public class Account {
 
     private static int cuentas = 0;
     private String nroCuenta;
@@ -10,8 +10,8 @@ public class Cuenta {
     private double monto;
     private String clave;
 
-    public Cuenta(){
-        this.nroCuenta = String.valueOf(++Cuenta.cuentas);
+    public Account() {
+        this.nroCuenta = String.valueOf(++Account.cuentas);
     }
 
     public String getNroCuenta() {
@@ -63,8 +63,8 @@ public class Cuenta {
     }
 
     @Override
-    public String toString(){
-        return "{Id: " + this.nroCuenta + ", nombre: " + this.nombre + ", apellido: "+ this.apellido +
+    public String toString() {
+        return "{Id: " + this.nroCuenta + ", nombre: " + this.nombre + ", apellido: " + this.apellido +
                 ", cedula: " + this.cedula + ", monto: " + this.monto + ", clave: " + this.clave + "}";
     }
 }

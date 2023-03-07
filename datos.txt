@@ -1,3 +1,4 @@
 1/Juan/Carlos/1116445210/0.0/1234
 3/maycol/agredo/1116445211/70000.0/4321
-4/juancito/peres/12345/0.0/1234
+4/juanita/amariles/76543/300000.0/1234
+5/maycol/agredo/2345/20.0/1234

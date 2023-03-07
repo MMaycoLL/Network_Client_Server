@@ -6,7 +6,7 @@ import java.net.InetAddress;
 import java.util.Scanner;
 
 public class EchoUDPClient {
-    private static final Scanner SCANNER = new Scanner(System.in);
+    public static final Scanner SCANNER = new Scanner(System.in);
 
     public static final String SERVER = "localhost";
     public static final int PORT = 3500;
