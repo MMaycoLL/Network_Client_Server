@@ -33,8 +33,6 @@ public class EchoTCPServer {
     }
 
 
-
-
     public void init() throws Exception {
         listener = new ServerSocket(PORT);
         ServerHandler.cuentas = new HashMap<>();
@@ -48,7 +46,6 @@ public class EchoTCPServer {
             }
         }
     }
-
 
     private void createStreams(Socket socket) throws Exception {
         toNetwork = new PrintWriter(socket.getOutputStream(), true);
@@ -137,6 +134,7 @@ public class EchoTCPServer {
         toNetwork.println("Adios desde el servidor :D");
         socket.close();
     }
+
 
 
 }

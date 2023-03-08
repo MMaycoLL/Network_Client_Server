@@ -26,7 +26,7 @@ public class ServerHandler {
             if (ServerHandler.consultarCuenta(data)) {
                 return "1";
             }
-            System.out.println("Open account...");
+            System.out.println("Cuenta creada...");
             Account account = new Account();
             account.setNombre(data.split("/")[2]);
             account.setApellido(data.split("/")[3]);
@@ -69,7 +69,7 @@ public class ServerHandler {
             default:
                 return "El campo a modificar no existe.";
         }
-        return "Account modificada...";
+        return "Cuenta modificada...";
     }
 
     public static String cerrarCuenta(String data) {
@@ -77,7 +77,7 @@ public class ServerHandler {
         String clave = data.split("/")[3];
         if (cuentas.containsKey(idCuenta) && cuentas.get(idCuenta).getClave().equals(clave)) {
             cuentas.remove(idCuenta);
-            return "Account cerrada...";
+            return "Cuenta cancelada...";
         }
         return "No se ha cerrado la cuenta, la información ingresada es incorrecta.";
     }
