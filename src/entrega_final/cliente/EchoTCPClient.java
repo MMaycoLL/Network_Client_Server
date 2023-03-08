@@ -24,7 +24,7 @@ public class EchoTCPClient {
         ec.init();
     }
 
-    public static void protocoloSalir(Socket socket) throws IOException {
+    public static void salirCuenta(Socket socket) throws IOException {
         toNetwork.println("SALIR");
         String resp = fromNetwork.readLine();
         System.out.println(resp);

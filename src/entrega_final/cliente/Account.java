@@ -2,7 +2,7 @@ package entrega_final.cliente;
 
 public class Account {
 
-    private static int cuentas = 0;
+    private static int cuentas = 8888;
     private String nroCuenta;
     private String nombre;
     private String apellido;
