@@ -131,7 +131,7 @@ public class EchoTCPServer {
 
     public static void salirCuenta(Socket socket) throws IOException {
         System.out.println("Cerrando conexión con el cliente: " + socket.getInetAddress().getHostAddress());
-        toNetwork.println("Adios desde el servidor :D");
+        toNetwork.println("Conexion cerrada por el servidor...........");
         socket.close();
     }
 

@@ -7,7 +7,7 @@ import static entrega_final.cliente.EchoTCPClient.*;
 public class ClientHandlerIterationOne {
 
     public static void consutarIdCuenta() throws IOException {
-        System.out.print("Ingrese la siguiente información");
+        System.out.print("Ingrese la siguiente información \n");
         System.out.print("Cedula: ");
         String cedula = SCANNER.nextLine().trim();
 
@@ -54,6 +54,7 @@ public class ClientHandlerIterationOne {
             clave = SCANNER.nextLine().trim();
         } while (clave.isEmpty());
 
+        System.out.print("\n Cuenta creada con exito! \n ");
         // Enviar la información a través de la red
         String message = String.format("CUENTA/ABRIR/%s/%s/%s/%s/%s", nombre, apellido, cedula, monto, clave);
         toNetwork.println(message);

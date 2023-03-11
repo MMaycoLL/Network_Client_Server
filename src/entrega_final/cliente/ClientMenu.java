@@ -35,7 +35,6 @@ public class ClientMenu {
             }
         }
     }
-//confi
     public static void operacionesBasicas() throws Exception {
         boolean exit = false;
         while (!exit) {
