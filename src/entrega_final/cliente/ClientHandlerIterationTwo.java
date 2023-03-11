@@ -19,7 +19,7 @@ public class ClientHandlerIterationTwo {
         System.out.print("Monto: ");
         String monto = SCANNER.nextLine().trim();
 
-        String mensaje = String.format("MOVI/CONSIG/%s/%s/%s", idCuenta, cedula, monto);
+        String mensaje = String.format("MOVIMIENTO/CONSIGNACION/%s/%s/%s", idCuenta, cedula, monto);
         toNetwork.println(mensaje);
 
         String resp = fromNetwork.readLine();
@@ -29,7 +29,7 @@ public class ClientHandlerIterationTwo {
 
     public static void transferenciaBancaria() throws IOException {
         System.out.println("Ingrese la siguiente información");
-        System.out.print("ID cuenta origen: ");
+        System.out.print("ID cuenta de  origen: ");
         String idCuentaOrigen = SCANNER.nextLine().trim();
 
         System.out.print("Clave: ");

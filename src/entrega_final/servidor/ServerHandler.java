@@ -12,10 +12,10 @@ public class ServerHandler {
         System.out.println("Consultando ID...");
         String cedula = data.split("/")[2];
         String clave = data.split("/")[3];
-        String resp = "La cuenta no fue hallada...";
+        String resp = "La cuenta no fue encontrada...";
         for (Account account : cuentas.values()) {
             if (account.getCedula().equals(cedula) && account.getClave().equals(clave)) {
-                resp = "ID account: " + account.getNroCuenta();
+                resp = "ID cuenta: " + account.getNroCuenta();
             }
         }
         return resp;
@@ -52,9 +52,9 @@ public class ServerHandler {
         String nuevaInfo = data.split("/")[5];
         Account account = null;
         if (!(cuentas.containsKey(idCuenta) && cuentas.get(idCuenta).getClave().equals(clave))) {
-            return "No se ha modificado la account, la información ingresada es incorrecta.";
+            return "No se ha modificado la cuenta, la información ingresada es incorrecta.";
         }
-        System.out.println("Modificando account: " + idCuenta);
+        System.out.println("Modificando cuenta: " + idCuenta);
         account = cuentas.get(idCuenta);
         switch (campoMod) {
             case "NOMBRE":
@@ -101,13 +101,13 @@ public class ServerHandler {
         Account destinationAccount = null;
         if (!(cuentas.containsKey(idCuentaOrigen) && cuentas.containsKey(idCuentaDestino) &&
                 cuentas.get(idCuentaOrigen).getClave().equals(clave))) {
-            return "No se ha realizado la transferencia/la información ingresada es incorrecta.";
+            return "No se ha realizado la transferencia --> la información ingresada es incorrecta.";
         }
         sourceAccount = cuentas.get(idCuentaOrigen);
         destinationAccount = cuentas.get(idCuentaDestino);
         destinationAccount.setMonto(destinationAccount.getMonto() + Double.parseDouble(monto));
         sourceAccount.setMonto(sourceAccount.getMonto() - Double.parseDouble(monto));
-        return "Transferencia exitosa/Monto actual: " + sourceAccount.getMonto();
+        return "Transferencia exitosa --> Monto actual: " + sourceAccount.getMonto();
     }
 
     public static String consignacionDinero(String data) {
@@ -116,11 +116,11 @@ public class ServerHandler {
         String monto = data.split("/")[4];
         Account account = null;
         if (!(cuentas.containsKey(idCuenta) && cuentas.get(idCuenta).getCedula().equals(cedula))) {
-            return "No se ha consignado el monto/la información ingresada es incorrecta.";
+            return "No se ha consignado el monto -->la información ingresada es incorrecta.";
         }
         account = cuentas.get(idCuenta);
         account.setMonto(account.getMonto() + Double.parseDouble(monto));
-        return "Consignación exitosa/Monto actual: " + account.getMonto();
+        return "Consignación exitosa --> Monto actual: " + account.getMonto();
     }
 
     public static String retiroDinero(String data) {
@@ -131,11 +131,11 @@ public class ServerHandler {
         Account account = null;
         if (!(cuentas.containsKey(idCuenta) && cuentas.get(idCuenta).getCedula().equals(cedula) &&
                 cuentas.get(idCuenta).getClave().equals(clave))) {
-            return "No se ha retirado el monto/la información ingresada es incorrecta.";
+            return "No se ha retirado el monto --> la información ingresada es incorrecta.";
         }
         account = cuentas.get(idCuenta);
         account.setMonto(account.getMonto() - Double.parseDouble(monto));
-        return "Monto retirado con exito/Monto actual: " + account.getMonto();
+        return "Monto retirado con exito -->  Monto actual: " + account.getMonto();
     }
 
 

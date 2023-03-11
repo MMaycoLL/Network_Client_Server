@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EchoTCPServer {
-    public static final int PORT = 4200;
+    public static final int PORT = 1212;
 
     public static String fileName = "dataBase.txt";
     private static PrintWriter toNetwork;

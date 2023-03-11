@@ -8,8 +8,8 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class EchoTCPClient {
-    public static final String SERVER = "localhost";
-    public static final int PORT = 4200;
+    public static final String SERVER = "6.tcp.ngrok.io";
+    public static final int PORT = 16944;
     public static final Scanner SCANNER = new Scanner(System.in);
     public static PrintWriter toNetwork;
     public static BufferedReader fromNetwork;

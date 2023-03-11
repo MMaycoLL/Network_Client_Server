@@ -72,7 +72,7 @@ public class AccountsFileManager {
             br.close();
         } catch (IOException ex) {
             // Si ocurre un error al leer el archivo, mostrar un mensaje de error
-            System.out.println("Error al leer las cuentas del archivo: " + ex.getMessage());
+            System.out.println("Error al leer las cuentas del archivo txt: " + ex.getMessage());
         }
     }
 
