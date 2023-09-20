@@ -13,13 +13,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EchoTCPServer {
-    public static final int PORT = 1212;
+    public static final int PORT = 3400;
 
     public static String fileName = "dataBase.txt";
-    private static PrintWriter toNetwork;
-    public Socket serverSideSocket;
-    private ServerSocket listener;
-    private BufferedReader fromNetwork;
+    private static PrintWriter toNetwork;  //para enviar datos a través del socket hacia el cliente
+    public Socket serverSideSocket; // Implementa un extremo de la conexión TCP
+    private ServerSocket listener; // Se encarga de implementar el extremo Servidor de la conexión en la que se esperarán las conexiones de los clientes.
+    private BufferedReader fromNetwork;//para recibir datos del cliente a través del socket
     private AccountsFileManager accountsFileManager;
 
     public EchoTCPServer() {
@@ -48,7 +48,7 @@ public class EchoTCPServer {
     }
 
     private void createStreams(Socket socket) throws Exception {
-        toNetwork = new PrintWriter(socket.getOutputStream(), true);
+        toNetwork = new PrintWriter(socket.getOutputStream(), true);//buffer, estructura de tipo FIFO
         fromNetwork = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
 
